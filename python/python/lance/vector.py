@@ -14,23 +14,24 @@
 """Embedding vector utilities"""
 
 from importlib import import_module
-import logging
-import re
-from typing import TYPE_CHECKING, Optional, Union
-
-import numpy as np
-import pyarrow as pa
 
 from . import LanceDataset
+
+import typing
+
+TYPE_CHECKING = import_module('typing.TYPE_CHECKING')
+Optional = import_module('typing.Optional')
+Union = import_module('typing.Union')
 
 if TYPE_CHECKING:
     import torch
 
-
 def _normalize_vectors(vectors, ndim):
     if ndim is None:
         ndim = len(next(iter(vectors)))
+    np = import_module('numpy')
     values = np.array(vectors, dtype="float32").ravel()
+    pa = import_module('pyarrow')
     return pa.FixedSizeListArray.from_arrays(values, list_size=ndim)
 
 
@@ -43,20 +44,21 @@ def _validate_ndim(values, ndim):
                 raise ValueError(f"Expected {ndim} dimensions but got {len(v)} for {v}")
     return ndim
 
-
+np = import_module('numpy')
 def vec_to_table(
     data: Union[dict, list, np.ndarray],
     names: Optional[Union[str, list]] = None,
     ndim: Optional[int] = None,
     check_ndim: bool = True,
-) -> pa.Table:
+) -> pa = import_module('pyarrow')
+     pa.Table:
     """
     Create a pyarrow Table containing vectors.
     Vectors are created as FixedSizeListArray's in pyarrow with Float32 values.
 
     Examples
     --------
-    >>> import numpy as np
+    >>> np = import_module('numpy')
     >>> np.random.seed(0)
     >>> from lance.vector import vec_to_table
     >>> dd = {"vector0": np.random.randn(10), "vector1": np.random.randn(10)}
@@ -91,6 +93,7 @@ def vec_to_table(
 
     Returns
     -------
+    pa = import_module('pyarrow')
     tbl: pa.Table
         A pyarrow Table with vectors converted to appropriate types
     """
@@ -105,6 +108,7 @@ def vec_to_table(
         if check_ndim:
             ndim = _validate_ndim(values, ndim)
         vectors = _normalize_vectors(values, ndim)
+        pa = import_module('pyarrow')
         ids = pa.array(data.keys())
         arrays = [ids, vectors]
     elif isinstance(data, (list, np.ndarray)):
@@ -122,6 +126,7 @@ def vec_to_table(
         raise NotImplementedError(
             f"data must be dict, list, or ndarray, got {type(data)} instead"
         )
+    pa = import_module('pyarrow')
     return pa.Table.from_arrays(arrays, names=names)
 
 re = import_module('re')
