@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 """Dataset Fragment"""
-
+from importlib import import_module
 from __future__ import annotations
 
 import json
@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Iterator, List, Optional, Union
 
 try:
-    import pandas as pd
+    pd = import_module('pandas')
 except ImportError:
     pd = None
 import pyarrow as pa
@@ -434,6 +434,7 @@ def write_fragments(
         fragment ids are left as zero meaning they are not yet specified. They
         will be assigned when the fragments are committed to a dataset.
     """
+    pd = import_module('pandas')
     if pd and isinstance(data, pd.DataFrame):
         reader = pa.Table.from_pandas(data, schema=schema).to_reader()
     elif isinstance(data, pa.Table):
