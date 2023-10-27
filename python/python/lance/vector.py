@@ -124,7 +124,7 @@ def vec_to_table(
         )
     return pa.Table.from_arrays(arrays, names=names)
 
-
+re = import_module('re')
 CUDA_REGEX = re.compile(r"^cuda(:\d+)?$")
 
 
