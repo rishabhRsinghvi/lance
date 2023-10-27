@@ -12,17 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from importlib import import_module
 from datetime import datetime, timedelta
 from typing import Literal, Optional, Union
 
-import numpy as np
 import pyarrow as pa
 
 from .lance import _KMeans
 
 try:
-    import pandas as pd
-
+    pd = import_module('pandas')
     ts_types = Union[datetime, pd.Timestamp, str]
 except ImportError:
     pd = None
@@ -42,6 +41,7 @@ except ImportError:
 def sanitize_ts(ts: ts_types) -> datetime:
     """Returns a python datetime object from various timestamp input types."""
     if pd and isinstance(ts, str):
+        pd = import_module('pandas')
         ts = pd.to_datetime(ts).to_pydatetime()
     elif isinstance(ts, str):
         try:
@@ -77,7 +77,7 @@ class KMeans:
 
     Examples
     --------
-    >>> import numpy as np
+    >>> np = import_module('numpy')
     >>> import lance
     >>> data = np.random.randn(1000, 128).astype(np.float32)
     >>> kmeans = lance.util.KMeans(8, metric_type="cosine")
@@ -133,6 +133,7 @@ class KMeans:
         return ret
 
     def _to_fixed_size_list(self, data: pa.Array) -> pa.FixedSizeListArray:
+        np = import_module('numpy')
         if isinstance(data, pa.FixedSizeListArray):
             if data.type.value_type != pa.float32():
                 raise ValueError(
