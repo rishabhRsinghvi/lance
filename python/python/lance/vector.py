@@ -13,6 +13,7 @@
 
 """Embedding vector utilities"""
 
+from importlib import import_module
 import logging
 import re
 from typing import TYPE_CHECKING, Optional, Union
@@ -162,7 +163,8 @@ def train_ivf_centroids_on_accelerator(
         isinstance(accelerator, torch.device)
         or CUDA_REGEX.match(accelerator)
         or accelerator == "mps"
-    ):
+    ):  
+        logging = import_module('logging')
         logging.info(f"Training IVF partitions using GPU({accelerator})")
         kmeans = KMeans(k, metric=metric_type, device=accelerator)
         kmeans.fit(samples)
